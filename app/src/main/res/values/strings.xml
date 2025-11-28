@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Безопасность</string>
+    <string name="practice_title">Практика: %s</string>
+    <string name="back">Назад</string>
+    <string name="enter_payload">Введите ваш пейлоад:</string>
+    <string name="input">Ввод</string>
+    <string name="attack">Атаковать</string>
+    <string name="hint">Подсказка</string>
+    <string name="hint_title">Подсказка:</string>
+    <string name="simulation">Симуляция:</string>
+    <string name="loading">Загрузка...</string>
+    <string name="web_page_simulation">Симуляция веб-страницы</string>
+    <string name="web_page_simulation_desc">Это симуляция уязвимой веб-страницы. Ваш ввод будет отображен ниже:</string>
+    <string name="db_query_simulation">Симуляция запроса к базе данных</string>
+    <string name="db_query_simulation_desc">Это симуляция уязвимого запроса к базе данных. Ваш ввод будет использован в запросе ниже:</string>
+    <string name="profile">Профиль</string>
+    <string name="your_progress">Ваш прогресс</string>
+    <string name="scenarios_completed" formatted="false">%d / %d сценариев завершено</string>
+    <string name="achievements">Достижения</string>
+    <string name="first_step_title">Первый шаг</string>
+    <string name="first_step_desc">Завершите свой первый сценарий безопасности</string>
+    <string name="security_expert_title">Эксперт по безопасности</string>
+    <string name="security_expert_desc">Завершите все сценарии безопасности</string>
+    <string name="no_hints_needed_title">Подсказки не нужны</string>
+    <string name="no_hints_needed_desc">Завершите сценарий без использования подсказок</string>
+    <string name="first_try_title">С первой попытки</string>
+    <string name="first_try_desc">Завершите сценарий с первой попытки</string>
+    <string name="unlocked">Разблокировано</string>
+    <string name="locked">Заблокировано</string>
+    <string name="attack_successful">Атака успешна!</string>
+    <string name="attack_failed">Атака не удалась</string>
+    <string name="success">Успех</string>
+    <string name="failure">Неудача</string>
+    <string name="view_profile">Посмотреть профиль</string>
+    <string name="xss_success">XSS-атака успешна! Ваш скрипт был бы выполнен в реальном уязвимом приложении.</string>
+    <string name="xss_fail">XSS-атака не удалась. Попробуйте внедрить тег скрипта для выполнения JavaScript-кода.</string>
+    <string name="sqli_success">SQL-инъекция успешна! Ваш ввод обошел бы аутентификацию в реальном уязвимом приложении.</string>
+    <string name="sqli_fail">SQL-инъекция не удалась. Попробуйте ввести условие, которое всегда истинно, чтобы обойти аутентификацию. Распространенные шаблоны включают: \' OR \'1\'=\'1 или \' OR 1=1</string>
+    <string name="unknown_vulnerability">Неизвестный тип уязвимости</string>
+    <string name="security_scenarios">Сценарии безопасности</string>
+    <string name="completed">Завершено</string>
+    <string name="description">Описание</string>
+    <string name="theory">Теория</string>
+    <string name="example">Пример</string>
+    <string name="practice">Практика</string>
+</resources>

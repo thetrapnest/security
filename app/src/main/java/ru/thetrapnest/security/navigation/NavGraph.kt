@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ru.thetrapnest.security.ui.screens.LoginScreen
 import ru.thetrapnest.security.ui.screens.PracticeScreen
 import ru.thetrapnest.security.ui.screens.ProfileScreen
 import ru.thetrapnest.security.ui.screens.ScenarioListScreen
@@ -17,8 +18,12 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "scenarios"
+        startDestination = "login"
     ) {
+        composable("login") {
+            LoginScreen(navController = navController)
+        }
+
         composable("scenarios") {
             ScenarioListScreen(navController = navController)
         }

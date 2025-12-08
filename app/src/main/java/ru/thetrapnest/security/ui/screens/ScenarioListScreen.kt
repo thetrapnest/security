@@ -1,15 +1,23 @@
 package ru.thetrapnest.security.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,7 +27,7 @@ import ru.thetrapnest.security.R
 import ru.thetrapnest.security.database.VulnerabilityEntity
 import ru.thetrapnest.security.viewmodel.SecurityViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ScenarioListScreen(
     navController: NavController,
@@ -35,20 +43,36 @@ fun ScenarioListScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f))
         ) {
-            items(vulnerabilities) { vulnerability ->
-                val progress = progressList.find { it.vulnerabilityId == vulnerability.id }
-                ScenarioItem(
-                    vulnerability = vulnerability,
-                    isCompleted = progress?.completed == true,
-                    onScenarioClick = { navController.navigate("theory/${vulnerability.id}") }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.choose_scenario),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                fontWeight = FontWeight.Bold
+            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 180.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(vulnerabilities, key = { it.id }) { vulnerability ->
+                    val progress = progressList.find { it.vulnerabilityId == vulnerability.id }
+                    ScenarioItem(
+                        vulnerability = vulnerability,
+                        isCompleted = progress?.completed == true,
+                        attempts = progress?.attempts ?: 0,
+                        onScenarioClick = { navController.navigate("theory/${vulnerability.id}") }
+                    )
+                }
             }
         }
     }
@@ -58,12 +82,16 @@ fun ScenarioListScreen(
 fun ScenarioItem(
     vulnerability: VulnerabilityEntity,
     isCompleted: Boolean,
+    attempts: Int,
     onScenarioClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onScenarioClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -73,6 +101,35 @@ fun ScenarioItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AssistChip(
+                        onClick = {},
+                        label = { Text(vulnerability.type.name) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Flag,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (isCompleted) {
+                        StatusBadge(text = stringResource(R.string.completed))
+                    } else {
+                        StatusBadge(
+                            text = stringResource(R.string.in_progress),
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            alpha = 0.9f
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = vulnerability.title,
                     style = MaterialTheme.typography.titleMedium,
@@ -83,14 +140,42 @@ fun ScenarioItem(
                     text = vulnerability.description,
                     style = MaterialTheme.typography.bodyMedium
                 )
-            }
-            if (isCompleted) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = stringResource(R.string.completed),
-                    tint = MaterialTheme.colorScheme.primary
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.attempts_short, attempts),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = stringResource(R.string.completed),
+                tint = if (isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
         }
+    }
+}
+
+@Composable
+private fun StatusBadge(
+    text: String,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    alpha: Float = 1f
+) {
+    Surface(
+        color = containerColor.copy(alpha = alpha),
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = 1.dp
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 4.dp)
+                .alpha(alpha),
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }

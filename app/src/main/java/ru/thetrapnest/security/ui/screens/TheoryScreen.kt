@@ -6,7 +6,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +27,7 @@ fun TheoryScreen(
     viewModel: SecurityViewModel = viewModel()
 ) {
     val vulnerability by viewModel.getVulnerabilityById(vulnerabilityId).collectAsState(initial = null)
-    
+
     vulnerability?.let { vuln ->
         Scaffold(
             topBar = {
@@ -39,63 +42,121 @@ fun TheoryScreen(
                         }
                     }
                 )
+            },
+            bottomBar = {
+                Surface(shadowElevation = 6.dp) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        OutlinedButton(
+                            modifier = Modifier.weight(1f),
+                            onClick = { navController.popBackStack() }
+                        ) {
+                            Text(stringResource(R.string.back))
+                        }
+                        Button(
+                            modifier = Modifier.weight(1f),
+                            onClick = { navController.navigate("practice/${vuln.id}") }
+                        ) {
+                            Text(stringResource(R.string.go_to_practice))
+                        }
+                    }
+                }
             }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.description),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                TheoryHeader()
+
+                TheorySection(
+                    title = stringResource(R.string.description),
+                    body = vuln.description
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = vuln.description,
-                    style = MaterialTheme.typography.bodyLarge
+                TheorySection(
+                    title = stringResource(R.string.theory),
+                    body = vuln.theory
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.theory),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = vuln.theory,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.example),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = vuln.example,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+                TheorySection(
+                    title = stringResource(R.string.example),
+                    body = vuln.example,
+                    highlight = true
                 )
                 Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = { navController.navigate("practice/${vuln.id}") },
-                    modifier = Modifier.align(androidx.compose.ui.Alignment.CenterHorizontally)
-                ) {
-                    Text(stringResource(R.string.practice))
-                }
             }
         }
     } ?: run {
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = androidx.compose.ui.Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
             Text(stringResource(R.string.loading))
+        }
+    }
+}
+
+@Composable
+private fun TheoryHeader() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.learning_path),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = 0.33f,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.step_indicator, 1, 3),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+private fun TheorySection(
+    title: String,
+    body: String,
+    highlight: Boolean = false
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (highlight) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
+        ),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Divider()
+            Text(
+                text = body,
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (highlight) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

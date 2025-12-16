@@ -10,7 +10,7 @@
     <string name="simulation">Симуляция:</string>
     <string name="loading">Загрузка...</string>
     <string name="web_page_simulation">Симуляция веб-страницы</string>
-    <string name="web_page_simulation_desc">Это симуляция уязвимой веб-страницы. Ваш ввод будет отображен ниже:</string>
+    <string name="web_page_simulation_desc">Это симуляция уязвимой веб-страницы. Ваш ввод будет отображён ниже:</string>
     <string name="db_query_simulation">Симуляция запроса к базе данных</string>
     <string name="db_query_simulation_desc">Это симуляция уязвимого запроса к базе данных. Ваш ввод будет использован в запросе ниже:</string>
     <string name="profile">Профиль</string>
@@ -45,6 +45,7 @@
     <string name="description">Описание</string>
     <string name="theory">Теория</string>
     <string name="example">Пример</string>
+    <string name="practice">Практика</string>
     <string name="practice">Прктика</string>
     <string name="go_to_practice">Перейти к практике</string>
     <string name="learning_path">Путь обучения</string>

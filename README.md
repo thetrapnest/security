@@ -1,3 +1,21 @@
+# Приложение для тренировки навыков безопасности
+
+Это Android‑приложение для отработки сценариев по безопасности. Ниже — подсказки, как посмотреть последние изменения в Git и как собрать/запустить приложение локально.
+
+## Просмотр последних изменений
+- Краткая история коммитов: `git log --oneline --decorate -5`
+- Файлы последнего коммита: `git show HEAD`
+- Состояние рабочего дерева: `git status -sb`
+- Сравнение локальной ветки с удалённой (если настроена): `git diff origin/work...work`
+
+## Запуск приложения
+1. **Установите зависимости:** Android Studio (Hedgehog или новее) с Android SDK 34+, плагином Kotlin и эмулятором либо физическим устройством с включённой отладкой по USB.
+2. **Синхронизируйте проект:** откройте репозиторий в Android Studio и дождитесь окончания синхронизации Gradle.
+3. **Запуск из IDE:** выберите конфигурацию `app` и нажмите **Run**, чтобы установить приложение на подключённое устройство/эмулятор.
+4. **Сборка из командной строки:** из корня репозитория выполните `./gradlew :app:assembleDebug`, после чего debug‑APK появится в `app/build/outputs/apk/debug/`.
+5. **Очистка и сборка (опционально):** `./gradlew clean assembleDebug`
+
+Если только что обновили зависимости или подтянули свежие изменения, выполните `./gradlew --refresh-dependencies`, чтобы убедиться, что плагины и библиотеки актуальны.
 # Security Training App
 
 This repository contains an Android application for practicing security scenarios. The notes below show how to inspect the latest changes in Git and how to run the app locally.

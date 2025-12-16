@@ -51,21 +51,21 @@ class SecurityRepository(context: Context) {
             val defaultVulnerabilities = listOf(
                 VulnerabilityEntity(
                     id = 1,
-                    title = "Cross-Site Scripting (XSS)",
-                    description = "A type of security vulnerability that allows attackers to inject malicious scripts into web pages viewed by other users.",
+                    title = "Межсайтовый скриптинг (XSS)",
+                    description = "Уязвимость, позволяющая злоумышленникам внедрять вредоносные скрипты в веб-страницы, которые просматривают другие пользователи.",
                     type = VulnerabilityType.XSS,
-                    theory = "XSS occurs when a web application incorporates untrusted data into web pages without proper validation or escaping. This allows attackers to execute malicious scripts in the victim's browser.",
-                    example = "Example: <script>alert('XSS Attack!')</script>",
-                    hint = "Try injecting a script tag into the input field."
+                    theory = "XSS возникает, когда веб-приложение вставляет непроверенные данные на страницу без валидации или экранирования. Это позволяет злоумышленнику выполнять произвольные скрипты в браузере жертвы.",
+                    example = "Пример: <script>alert('XSS-атака!')</script>",
+                    hint = "Попробуйте вставить тег <script> в поле ввода."
                 ),
                 VulnerabilityEntity(
                     id = 2,
-                    title = "SQL Injection (SQLi)",
-                    description = "A code injection technique that exploits vulnerabilities in an application's software by inserting malicious SQL statements into an entry field.",
+                    title = "SQL-инъекция (SQLi)",
+                    description = "Техника внедрения кода, использующая уязвимости в обработке запросов: вредоносные SQL-выражения вставляются через поле ввода.",
                     type = VulnerabilityType.SQLI,
-                    theory = "SQL injection occurs when user input is not properly sanitized before being included in SQL queries. This allows attackers to manipulate the query structure and potentially access, modify, or delete data.",
-                    example = "Example: ' OR '1'='1",
-                    hint = "Try entering a condition that is always true."
+                    theory = "SQL-инъекция возникает, когда ввод пользователя включается в SQL-запрос без очистки и параметризации. Так злоумышленник может изменить структуру запроса и получить доступ к данным.",
+                    example = "Пример: ' OR '1'='1",
+                    hint = "Попробуйте ввести условие, которое всегда истинно."
                 )
             )
             vulnerabilityDao.insertVulnerabilities(defaultVulnerabilities)

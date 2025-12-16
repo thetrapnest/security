@@ -46,6 +46,7 @@
     <string name="theory">Теория</string>
     <string name="example">Пример</string>
     <string name="practice">Практика</string>
+    <string name="practice">Прктика</string>
     <string name="go_to_practice">Перейти к практике</string>
     <string name="learning_path">Путь обучения</string>
     <string name="step_indicator">Шаг %d из %d</string>

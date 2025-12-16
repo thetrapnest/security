@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.thetrapnest.security.R
+import ru.thetrapnest.security.data.VulnerabilityType
 import ru.thetrapnest.security.database.VulnerabilityEntity
 import ru.thetrapnest.security.viewmodel.SecurityViewModel
 
@@ -102,9 +103,14 @@ fun ScenarioItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    val typeLabel = when (vulnerability.type) {
+                        VulnerabilityType.XSS -> stringResource(R.string.vulnerability_type_xss)
+                        VulnerabilityType.SQLI -> stringResource(R.string.vulnerability_type_sqli)
+                    }
+
                     AssistChip(
                         onClick = {},
-                        label = { Text(vulnerability.type.name) },
+                        label = { Text(typeLabel) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Flag,

@@ -46,7 +46,6 @@
     <string name="theory">Теория</string>
     <string name="example">Пример</string>
     <string name="practice">Практика</string>
-    <string name="practice">Прктика</string>
     <string name="go_to_practice">Перейти к практике</string>
     <string name="learning_path">Путь обучения</string>
     <string name="step_indicator">Шаг %d из %d</string>
@@ -72,4 +71,6 @@
     <string name="next_goal_no_hints">Попробуйте пройти сценарий без подсказок</string>
     <string name="next_goal_master">Отлично! Поддерживайте уровень и пробуйте новые сценарии</string>
     <string name="attempt_hint_counter">Всего попыток: %d · Подсказок: %d</string>
+    <string name="vulnerability_type_xss">Межсайтовый скриптинг (XSS)</string>
+    <string name="vulnerability_type_sqli">SQL-инъекция (SQLi)</string>
 </resources>

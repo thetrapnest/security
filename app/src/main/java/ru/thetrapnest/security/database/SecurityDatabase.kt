@@ -5,17 +5,23 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import ru.thetrapnest.security.data.VulnerabilityType
 
 @Database(
-    entities = [VulnerabilityEntity::class, UserProgressEntity::class],
-    version = 1,
+    entities = [
+        VulnerabilityEntity::class,
+        UserProgressEntity::class,
+        UserEntity::class,
+        UserAchievementEntity::class
+    ],
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(VulnerabilityTypeConverter::class)
 abstract class SecurityDatabase : RoomDatabase() {
     abstract fun vulnerabilityDao(): VulnerabilityDao
     abstract fun userProgressDao(): UserProgressDao
+    abstract fun userDao(): UserDao
+    abstract fun userAchievementDao(): UserAchievementDao
 
     companion object {
         @Volatile
@@ -27,7 +33,9 @@ abstract class SecurityDatabase : RoomDatabase() {
                     context.applicationContext,
                     SecurityDatabase::class.java,
                     "security_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

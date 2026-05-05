@@ -13,18 +13,28 @@
     <string name="web_page_simulation_desc">Это симуляция уязвимой веб-страницы. Ваш ввод будет отображён ниже:</string>
     <string name="db_query_simulation">Симуляция запроса к базе данных</string>
     <string name="db_query_simulation_desc">Это симуляция уязвимого запроса к базе данных. Ваш ввод будет использован в запросе ниже:</string>
+    <string name="ldap_query_simulation">Симуляция LDAP-фильтра</string>
+    <string name="ldap_query_simulation_desc">Это симуляция уязвимого LDAP-запроса. Ваш ввод будет встроен в фильтр каталога:</string>
+    <string name="xpath_query_simulation">Симуляция XPath-запроса</string>
+    <string name="xpath_query_simulation_desc">Это симуляция уязвимого XPath-выражения. Ваш ввод будет добавлен в предикат XML-запроса:</string>
     <string name="profile">Профиль</string>
     <string name="your_progress">Ваш прогресс</string>
     <string name="scenarios_completed" formatted="false">%d / %d сценариев завершено</string>
     <string name="achievements">Достижения</string>
     <string name="first_step_title">Первый шаг</string>
     <string name="first_step_desc">Завершите свой первый сценарий безопасности</string>
+    <string name="pathfinder_title">Проводник лаборатории</string>
+    <string name="pathfinder_desc">Закройте два разных сценария и закрепите темп</string>
     <string name="security_expert_title">Эксперт по безопасности</string>
     <string name="security_expert_desc">Завершите все сценарии безопасности</string>
     <string name="no_hints_needed_title">Подсказки не нужны</string>
     <string name="no_hints_needed_desc">Завершите сценарий без использования подсказок</string>
     <string name="first_try_title">С первой попытки</string>
     <string name="first_try_desc">Завершите сценарий с первой попытки</string>
+    <string name="clean_series_title">Чистая серия</string>
+    <string name="clean_series_desc">Пройдите два сценария подряд без подсказок</string>
+    <string name="persistent_researcher_title">Настойчивый исследователь</string>
+    <string name="persistent_researcher_desc">Сделайте 10 попыток и соберите больше практики</string>
     <string name="unlocked">Разблокировано</string>
     <string name="locked">Заблокировано</string>
     <string name="attack_successful">Атака успешна!</string>
@@ -36,6 +46,10 @@
     <string name="xss_fail">XSS-атака не удалась. Попробуйте внедрить тег скрипта для выполнения JavaScript-кода.</string>
     <string name="sqli_success">SQL-инъекция успешна! Ваш ввод обошел бы аутентификацию в реальном уязвимом приложении.</string>
     <string name="sqli_fail">SQL-инъекция не удалась. Попробуйте ввести условие, которое всегда истинно, чтобы обойти аутентификацию. Распространенные шаблоны включают: \' OR \'1\'=\'1 или \' OR 1=1</string>
+    <string name="ldap_success">LDAP-инъекция успешна! Ваш фильтр расширил бы область поиска и нарушил бы ожидаемую логику авторизации.</string>
+    <string name="ldap_fail">LDAP-инъекция не удалась. Попробуйте закрыть текущий фильтр и добавить подстановку с оператором ИЛИ, например: *)(|(uid=*))</string>
+    <string name="xpath_success">XPath-инъекция успешна! Ваш ввод сделал бы XPath-условие истинным и позволил бы выбрать лишние узлы XML.</string>
+    <string name="xpath_fail">XPath-инъекция не удалась. Попробуйте добавить условие, которое всегда истинно, например: \' or \'1\'=\'1</string>
     <string name="unknown_vulnerability">Неизвестный тип уязвимости</string>
     <string name="security_scenarios">Сценарии безопасности</string>
     <string name="completed">Завершено</string>
@@ -48,7 +62,7 @@
     <string name="practice">Практика</string>
     <string name="go_to_practice">Перейти к практике</string>
     <string name="learning_path">Путь обучения</string>
-    <string name="step_indicator">Шаг %d из %d</string>
+    <string name="step_indicator">Шаг %1$d из %2$d</string>
     <string name="step_input">1. Ввод пейлоада</string>
     <string name="step_hint">2. Подсказка</string>
     <string name="step_simulation">3. Симуляция</string>
@@ -70,7 +84,43 @@
     <string name="next_goal_complete">Завершите сценарий %d, чтобы приблизиться к бейджу</string>
     <string name="next_goal_no_hints">Попробуйте пройти сценарий без подсказок</string>
     <string name="next_goal_master">Отлично! Поддерживайте уровень и пробуйте новые сценарии</string>
-    <string name="attempt_hint_counter">Всего попыток: %d · Подсказок: %d</string>
+    <string name="attempt_hint_counter">Всего попыток: %1$d · Подсказок: %2$d</string>
     <string name="vulnerability_type_xss">Межсайтовый скриптинг (XSS)</string>
     <string name="vulnerability_type_sqli">SQL-инъекция (SQLi)</string>
+    <string name="vulnerability_type_ldapi">LDAP-инъекция</string>
+    <string name="vulnerability_type_xpathi">XPath-инъекция</string>
+    <string name="hero_tagline">Security Lab</string>
+    <string name="hero_title">Тренируй атаки в визуальной кибер-лаборатории</string>
+    <string name="hero_description">Выбирайте сценарий, изучайте механику уязвимости и сразу переходите к интерактивной симуляции.</string>
+    <string name="metric_total">Сценарии</string>
+    <string name="metric_complete">Пройдено</string>
+    <string name="metric_attempts">Попытки</string>
+    <string name="metric_hints">Подсказки</string>
+    <string name="dashboard_title">Коллекция тренировочных сценариев</string>
+    <string name="dashboard_description">Каждая карточка ведёт от короткой теории к практической атаке и закреплению результата.</string>
+    <string name="activity_label">Активность</string>
+    <string name="attempt_hint_compact">%1$d попыт. · %2$d подсказ.</string>
+    <string name="open_scenario">Открыть сценарий</string>
+    <string name="theory_focus">Разбор уязвимости</string>
+    <string name="practice_label">Практика</string>
+    <string name="practice_hero_title">Соберите рабочий пейлоад</string>
+    <string name="practice_hero_description">Вводите строку, сверяйтесь с симуляцией и быстро проверяйте гипотезы на живом экране.</string>
+    <string name="hint_ready">Подсказка доступна в один тап</string>
+    <string name="simulation_description">Ниже видно, как приложение интерпретирует ваш ввод в зависимости от типа уязвимости.</string>
+    <string name="live_preview">Живой предпросмотр</string>
+    <string name="result_success_title">Пейлоад сработал</string>
+    <string name="result_fail_title">Пока не попали в уязвимость</string>
+    <string name="result_tag_success">Сценарий закрыт</string>
+    <string name="result_tag_retry">Нужна ещё одна попытка</string>
+    <string name="profile_title">Ваш уровень в лаборатории</string>
+    <string name="profile_description">Следите за прогрессом, скоростью прохождения и коллекцией достижений по сценариям.</string>
+    <string name="progress_label">прогресс</string>
+    <string name="achievement_title">Коллекция достижений</string>
+    <string name="achievement_description">Открывайте бейджи за чистые прохождения, скорость и глубину изучения сценариев.</string>
+    <string name="account_tagline">Аккаунт</string>
+    <string name="member_since">С нами с</string>
+    <string name="last_login">Последний вход</string>
+    <string name="logout">Выйти</string>
+    <string name="achievement_progress_value">%1$d/%2$d выполнено</string>
+    <string name="achievement_unlocked_at">Открыто: %1$s</string>
 </resources>

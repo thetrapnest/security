@@ -5,8 +5,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 
 @Entity(
-    tableName = "user_progress",
-    primaryKeys = ["userId", "vulnerabilityId"],
+    tableName = "user_achievements",
+    primaryKeys = ["userId", "achievementId"],
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,
@@ -17,12 +17,8 @@ import androidx.room.Index
     ],
     indices = [Index(value = ["userId"])]
 )
-data class UserProgressEntity(
+data class UserAchievementEntity(
     val userId: Long,
-    val vulnerabilityId: Int,
-    val completed: Boolean = false,
-    val hintsUsed: Int = 0,
-    val attempts: Int = 0,
-    val completedAt: Long? = null,
-    val lastPlayedAt: Long = 0
+    val achievementId: String,
+    val unlockedAt: Long
 )

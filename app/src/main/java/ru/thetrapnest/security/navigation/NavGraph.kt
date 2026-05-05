@@ -1,26 +1,59 @@
 package ru.thetrapnest.security.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ru.thetrapnest.security.ui.screens.AuthScreen
 import ru.thetrapnest.security.ui.screens.PracticeScreen
 import ru.thetrapnest.security.ui.screens.ProfileScreen
+import ru.thetrapnest.security.ui.screens.ResultScreen
 import ru.thetrapnest.security.ui.screens.ScenarioListScreen
 import ru.thetrapnest.security.ui.screens.TheoryScreen
-import ru.thetrapnest.security.ui.screens.ResultScreen
+import ru.thetrapnest.security.viewmodel.SecurityViewModel
 
 @Composable
 fun NavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: SecurityViewModel
 ) {
+    val currentUser by viewModel.currentUser.collectAsState()
+
+    LaunchedEffect(currentUser?.id) {
+        if (currentUser == null) {
+            navController.navigate("auth") {
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        } else {
+            navController.navigate("scenarios") {
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
-        startDestination = "scenarios"
+        startDestination = "auth"
     ) {
+        composable("auth") {
+            AuthScreen(viewModel = viewModel)
+        }
+
         composable("scenarios") {
-            ScenarioListScreen(navController = navController)
+            ScenarioListScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         
         composable(
@@ -30,7 +63,8 @@ fun NavGraph(
             val vulnerabilityId = backStackEntry.arguments?.getInt("vulnerabilityId") ?: 0
             TheoryScreen(
                 vulnerabilityId = vulnerabilityId,
-                navController = navController
+                navController = navController,
+                viewModel = viewModel
             )
         }
         
@@ -41,7 +75,8 @@ fun NavGraph(
             val vulnerabilityId = backStackEntry.arguments?.getInt("vulnerabilityId") ?: 0
             PracticeScreen(
                 vulnerabilityId = vulnerabilityId,
-                navController = navController
+                navController = navController,
+                viewModel = viewModel
             )
         }
         
@@ -60,12 +95,16 @@ fun NavGraph(
                 vulnerabilityType = vulnerabilityType,
                 vulnerabilityId = vulnerabilityId,
                 userInput = userInput,
-                navController = navController
+                navController = navController,
+                viewModel = viewModel
             )
         }
         
         composable("profile") {
-            ProfileScreen(navController = navController)
+            ProfileScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     }
 }

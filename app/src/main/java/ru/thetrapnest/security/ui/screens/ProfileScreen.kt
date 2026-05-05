@@ -1,222 +1,331 @@
 package ru.thetrapnest.security.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.thetrapnest.security.R
-import ru.thetrapnest.security.utils.AchievementManager
+import ru.thetrapnest.security.data.AchievementUiModel
+import ru.thetrapnest.security.database.UserEntity
+import ru.thetrapnest.security.ui.components.SecurityBackground
+import ru.thetrapnest.security.ui.components.SecurityBottomNav
+import ru.thetrapnest.security.ui.components.SecurityGlassCard
+import ru.thetrapnest.security.ui.components.SecurityMetricPill
+import ru.thetrapnest.security.ui.components.SecuritySectionHeading
+import ru.thetrapnest.security.ui.components.SecurityTag
+import ru.thetrapnest.security.ui.theme.Aqua
+import ru.thetrapnest.security.ui.theme.Mint
+import ru.thetrapnest.security.ui.theme.Sun
+import ru.thetrapnest.security.ui.theme.Violet
 import ru.thetrapnest.security.viewmodel.SecurityViewModel
+import java.text.DateFormat
+import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Suppress("UnusedParameter")
 fun ProfileScreen(
     navController: NavController,
-    viewModel: SecurityViewModel = viewModel()
+    viewModel: SecurityViewModel
 ) {
-    val context = LocalContext.current
-    val achievementManager = remember { AchievementManager.getInstance(context) }
-    val progressList by viewModel.userProgress.collectAsState()
-    val completedCount by viewModel.completedCount.collectAsState()
-    val totalScenarios = 2
-    val hintsUsed = progressList.sumOf { it.hintsUsed }
-    val attempts = progressList.sumOf { it.attempts }
+    val currentUser by viewModel.currentUser.collectAsState()
+    val stats by viewModel.userStats.collectAsState()
+    val achievements by viewModel.achievements.collectAsState()
+    val completionRatio = if (stats.totalScenarios > 0) {
+        stats.completedCount.toFloat() / stats.totalScenarios.toFloat()
+    } else {
+        0f
+    }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.profile)) }
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
+        bottomBar = {
+            SecurityBottomNav(
+                selectedRoute = "profile",
+                onScenariosClick = { navController.navigate("scenarios") },
+                onProfileClick = {}
             )
         }
     ) { paddingValues ->
-        Column(
+        SecurityBackground(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.your_progress),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    CircularProgressIndicator(
-                        progress = if (totalScenarios > 0) completedCount.toFloat() / totalScenarios else 0f,
-                        modifier = Modifier.size(120.dp),
-                        strokeWidth = 10.dp
-                    )
-                    Text(
-                        text = stringResource(R.string.scenarios_completed, completedCount, totalScenarios),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = stringResource(R.string.attempt_hint_counter, attempts, hintsUsed),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                currentUser?.let { user ->
+                    AccountSection(
+                        user = user,
+                        onLogout = { viewModel.logout() }
                     )
                 }
+
+                SecurityGlassCard(accent = Aqua) {
+                    SecurityTag(text = stringResource(R.string.profile), color = Aqua)
+                    SecuritySectionHeading(
+                        eyebrow = stringResource(R.string.your_progress),
+                        title = stringResource(R.string.profile_title),
+                        description = stringResource(R.string.profile_description)
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                progress = { completionRatio },
+                                modifier = Modifier.size(122.dp),
+                                strokeWidth = 12.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+                            )
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "${(completionRatio * 100).toInt()}%",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+                                Text(
+                                    text = stringResource(R.string.progress_label),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            SecurityMetricPill(
+                                title = stringResource(R.string.metric_complete),
+                                value = "${stats.completedCount}/${stats.totalScenarios}",
+                                icon = Icons.Default.AutoAwesome
+                            )
+                            SecurityMetricPill(
+                                title = stringResource(R.string.metric_attempts),
+                                value = stats.totalAttempts.toString(),
+                                icon = Icons.Default.Psychology
+                            )
+                            SecurityMetricPill(
+                                title = stringResource(R.string.metric_hints),
+                                value = stats.totalHintsUsed.toString(),
+                                icon = Icons.Default.Lock
+                            )
+                        }
+                    }
+                }
+
+                NextGoalSection(achievements = achievements)
+
+                SecuritySectionHeading(
+                    eyebrow = stringResource(R.string.achievements),
+                    title = stringResource(R.string.achievement_title),
+                    description = stringResource(R.string.achievement_description)
+                )
+
+                achievements.forEach { achievement ->
+                    AchievementItem(achievement = achievement)
+                }
             }
+        }
+    }
+}
 
-            NextGoalSection(completedCount, totalScenarios, hintsUsed)
-
+@Composable
+private fun AccountSection(
+    user: UserEntity,
+    onLogout: () -> Unit
+) {
+    SecurityGlassCard(accent = Violet) {
+        SecurityTag(
+            text = stringResource(R.string.account_tagline),
+            color = Violet
+        )
+        Text(
+            text = user.displayName,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.ExtraBold
+        )
+        Text(
+            text = user.email,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            SecurityMetricPill(
+                title = stringResource(R.string.member_since),
+                value = user.createdAt.formatTimestamp(),
+                icon = Icons.Default.AutoAwesome,
+                modifier = Modifier.weight(1f)
+            )
+            SecurityMetricPill(
+                title = stringResource(R.string.last_login),
+                value = user.lastLoginAt.formatTimestamp(),
+                icon = Icons.Default.Psychology,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onLogout
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                contentDescription = null
+            )
             Text(
-                text = stringResource(R.string.achievements),
-                style = MaterialTheme.typography.headlineSmall,
+                text = stringResource(R.string.logout),
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun NextGoalSection(achievements: List<AchievementUiModel>) {
+    val nextAchievement = achievements
+        .filterNot { it.unlocked }
+        .maxByOrNull { achievement -> achievement.progress.toFloat() / achievement.goal.toFloat() }
+
+    SecurityGlassCard(accent = Violet) {
+        SecurityTag(text = stringResource(R.string.next_goal), color = Violet)
+        if (nextAchievement == null) {
+            Text(
+                text = stringResource(R.string.next_goal_master),
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-
-            LaunchedEffect(completedCount, progressList) {
-                if (completedCount >= 1 && !achievementManager.isFirstStepAchieved()) {
-                    achievementManager.setFirstStepAchieved()
-                }
-
-                if (completedCount >= 2 && !achievementManager.isSecurityExpertAchieved()) {
-                    achievementManager.setSecurityExpertAchieved()
-                }
-
-                if (progressList.any { it.hintsUsed == 0 && it.completed } &&
-                    !achievementManager.isNoHintsNeededAchieved()) {
-                    achievementManager.setNoHintsNeededAchieved()
-                }
-
-                if (progressList.any { it.attempts == 1 && it.completed } &&
-                    !achievementManager.isFirstTryAchieved()) {
-                    achievementManager.setFirstTryAchieved()
-                }
-            }
-
-            AchievementItem(
-                title = stringResource(R.string.first_step_title),
-                description = stringResource(R.string.first_step_desc),
-                unlocked = achievementManager.isFirstStepAchieved()
+        } else {
+            Text(
+                text = nextAchievement.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
-            AchievementSpacer()
-            AchievementItem(
-                title = stringResource(R.string.security_expert_title),
-                description = stringResource(R.string.security_expert_desc),
-                unlocked = achievementManager.isSecurityExpertAchieved()
+            Text(
+                text = nextAchievement.description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            AchievementSpacer()
-            AchievementItem(
-                title = stringResource(R.string.no_hints_needed_title),
-                description = stringResource(R.string.no_hints_needed_desc),
-                unlocked = achievementManager.isNoHintsNeededAchieved()
+            LinearProgressIndicator(
+                progress = { nextAchievement.progress.toFloat() / nextAchievement.goal.toFloat() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = Violet,
+                trackColor = Violet.copy(alpha = 0.14f)
             )
-            AchievementSpacer()
-            AchievementItem(
-                title = stringResource(R.string.first_try_title),
-                description = stringResource(R.string.first_try_desc),
-                unlocked = achievementManager.isFirstTryAchieved()
+            Text(
+                text = stringResource(
+                    R.string.achievement_progress_value,
+                    nextAchievement.progress,
+                    nextAchievement.goal
+                ),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
 
 @Composable
-private fun NextGoalSection(completedCount: Int, totalScenarios: Int, hintsUsed: Int) {
-    val nextGoalText = when {
-        completedCount < totalScenarios -> stringResource(R.string.next_goal_complete, completedCount + 1)
-        hintsUsed > 0 -> stringResource(R.string.next_goal_no_hints)
-        else -> stringResource(R.string.next_goal_master)
-    }
+private fun AchievementItem(achievement: AchievementUiModel) {
+    val accent = if (achievement.unlocked) Mint else Sun
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(text = stringResource(R.string.next_goal), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Text(text = nextGoalText, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
-        }
-    }
-}
-
-@Composable
-private fun AchievementSpacer() {
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-fun AchievementItem(
-    title: String,
-    description: String,
-    unlocked: Boolean
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (unlocked)
-                MaterialTheme.colorScheme.primaryContainer
-            else
-                MaterialTheme.colorScheme.surfaceVariant
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+    SecurityGlassCard(accent = accent) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = if (unlocked)
-                    Icons.Default.Star
-                else
-                    Icons.Default.Lock,
-                contentDescription = if (unlocked) stringResource(R.string.unlocked) else stringResource(R.string.locked),
-                tint = if (unlocked)
-                    MaterialTheme.colorScheme.primary
-                else
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                imageVector = if (achievement.unlocked) Icons.Default.Star else Icons.Default.Lock,
+                contentDescription = if (achievement.unlocked) stringResource(R.string.unlocked) else stringResource(R.string.locked),
+                tint = accent,
+                modifier = Modifier.size(28.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Text(
-                    text = title,
+                    text = achievement.title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = if (unlocked)
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    else
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = description,
+                    text = achievement.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (unlocked)
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    else
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                LinearProgressIndicator(
+                    progress = { achievement.progress.toFloat() / achievement.goal.toFloat() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp),
+                    color = accent,
+                    trackColor = accent.copy(alpha = 0.14f)
+                )
+                Text(
+                    text = if (achievement.unlocked && achievement.unlockedAt != null) {
+                        stringResource(
+                            R.string.achievement_unlocked_at,
+                            achievement.unlockedAt.formatTimestamp()
+                        )
+                    } else {
+                        stringResource(
+                            R.string.achievement_progress_value,
+                            achievement.progress,
+                            achievement.goal
+                        )
+                    },
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
     }
+}
+
+private fun Long.formatTimestamp(): String {
+    return DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(this))
 }

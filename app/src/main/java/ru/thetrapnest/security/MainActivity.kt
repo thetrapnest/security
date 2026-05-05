@@ -28,7 +28,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val viewModel: SecurityViewModel = viewModel()
-                    NavGraph(navController = navController)
+                    NavGraph(
+                        navController = navController,
+                        viewModel = viewModel
+                    )
                 }
             }
         }
@@ -44,7 +47,11 @@ fun MainActivityPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
-            NavGraph(navController = navController)
+            val viewModel: SecurityViewModel = viewModel()
+            NavGraph(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     }
 }
